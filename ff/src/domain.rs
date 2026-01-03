@@ -1,3 +1,0 @@
-struct FeatureFlag {
-    state: bool,
-}
