@@ -4,18 +4,23 @@ use crate::app;
 
 pub fn init_router() -> Router {
     Router::new()
+        .merge(public_ff_router())
         .merge(featureflags_router())
         .merge(users_router())
         .merge(auth_router())
 }
 
+fn public_ff_router() -> Router {
+    Router::new().route("/ff/{id}", routing::get(get_ff_value))
+}
+
 fn featureflags_router() -> Router {
     Router::new()
-        .route("/ff", routing::post(create_ff))
-        .route("/ff/{id}", routing::get(get_ff_value))
-        .route("/ff/{id}", routing::patch(set_ff_value))
-        .route("/ff/{id}/details", routing::get(get_ff_details))
-        .route("/ff/{id}/details", routing::put(set_ff_details))
+        .route("/feature_flags", routing::post(create_ff))
+        .route("/feature_flags/{id}", routing::get(get_ff_value))
+        .route("/feature_flags/{id}", routing::patch(set_ff_value))
+        .route("/feature_flags/{id}/details", routing::get(get_ff_details))
+        .route("/feature_flags/{id}/details", routing::put(set_ff_details))
 }
 
 async fn create_ff() {
