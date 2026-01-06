@@ -1,5 +1,5 @@
-use axum::{Json, Router, http::StatusCode, routing};
-use serde::Serialize;
+use axum::{Json, Router, extract, http::{Method, StatusCode}, routing};
+use serde::{Serialize, Deserialize};
 
 use crate::{app, auth};
 
@@ -56,8 +56,8 @@ fn auth_router() -> Router {
         .route("/auth/reset_password", routing::post(reset_password))
 }
 
-async fn login() -> (StatusCode, Json<LoginResponse>) {
-    let token = auth::login("user", "pass");
+async fn login(extract::Json(payload): Json<LoginPayload>) -> (StatusCode, Json<LoginResponse>) {
+    let token = auth::login(&payload.email, &payload.password);
     if let Ok(t) = token {
         (StatusCode::OK, Json(LoginResponse{token: t}))
     } else {
@@ -70,4 +70,10 @@ async fn reset_password() {}
 #[derive(Serialize)]
 struct LoginResponse {
     token: String,
+}
+
+#[derive(Deserialize)]
+struct LoginPayload {
+    email: String,
+    password: String,
 }
