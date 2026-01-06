@@ -1,4 +1,4 @@
-use axum::{Json, Router, extract, http::{Method, StatusCode}, routing};
+use axum::{Json, Router, extract, http::StatusCode, routing};
 use serde::{Serialize, Deserialize};
 
 use crate::{app, auth};
