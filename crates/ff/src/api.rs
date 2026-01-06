@@ -36,6 +36,7 @@ fn users_router() -> Router {
         .route("/users", routing::post(create_user))
         .route("/users/{id}", routing::get(get_user_by_id))
         .route("/users/{id}/password", routing::post(reset_user_password))
+        .route("/users/{id}/password", routing::put(modify_user_password))
         .route("/users/{id}/profile", routing::get(get_user_profile))
         .route("/users/{id}/profile", routing::patch(modify_user_profile))
 }
@@ -43,6 +44,7 @@ fn users_router() -> Router {
 async fn create_user() {}
 async fn get_user_by_id() {}
 async fn reset_user_password() {}
+async fn modify_user_password() {}
 async fn get_user_profile() {}
 async fn modify_user_profile() {}
 
@@ -50,11 +52,9 @@ fn auth_router() -> Router {
     Router::new()
         .route("/auth/login", routing::post(login))
         .route("/auth/logout", routing::post(logout))
-        .route("/auth/change_password", routing::patch(change_password))
         .route("/auth/reset_password", routing::post(reset_password))
 }
 
 async fn login() {}
 async fn logout() {}
-async fn change_password() {}
 async fn reset_password() {}
