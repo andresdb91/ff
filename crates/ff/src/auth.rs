@@ -1,3 +1,5 @@
+// Auth module handling authn and authz
+
 use std::collections::HashMap;
 
 use argon2::{
@@ -55,7 +57,7 @@ impl UserRepository {
     fn get_user_by_email(email: &str) -> User {
         User {
             email: String::from(email),
-            password_hash: String::from("passwordhashpasswordhashpasswordhash"),
+            password_hash: String::from("$argon2id$v=19$m=16,t=2,p=1$YXNkYXNkYXNk$9Hpn9PPMiFgjIoD72R3jRg"),
             role: Role {
                 name: String::from("UserRole"),
                 permissions: HashMap::from([(String::from("/"), 0b00011111)]),

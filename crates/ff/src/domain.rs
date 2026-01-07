@@ -1,3 +1,5 @@
+// Hold domain models and invariants
+
 #[derive(Debug)]
 pub enum FeatureFlagKind {
     Release,

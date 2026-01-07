@@ -4,5 +4,6 @@ mod app;
 mod adapter;
 mod utils;
 mod auth;
+mod config;
 
 pub fn setup() {}
