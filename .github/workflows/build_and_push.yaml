@@ -52,7 +52,7 @@ jobs:
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           registry: ghcr.io
-          repository: ${{ github.repository }}
+          repository: ff
           token: ${{ secrets.GITHUB_TOKEN }}
           keep-n-tagged: 5
           older-than: "30 days"

@@ -4,7 +4,7 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 struct Args {
     #[arg(short, long)]
-    log_level: String
+    log_level: Option<String>
 }
 
 #[tokio::main]

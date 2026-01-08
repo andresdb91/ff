@@ -14,7 +14,7 @@ impl Config {
         Figment::from(providers::Serialized::defaults(Config::default()))
             .merge(providers::Toml::file("config.toml"))
             .merge(providers::Env::prefixed("FF_"))
-            .merge(providers::Serialized::defaults(overrides))
+            .merge(providers::Serialized::defaults(overrides.unwrap_or(Config{})))
             .extract()
             .expect("Error parsing configuration")
     }
