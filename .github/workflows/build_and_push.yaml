@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -36,6 +38,9 @@ jobs:
           push: true # Pushes the image to the registry
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # Optional: Enable Docker layer caching for faster subsequent builds
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   cleanup:
     runs-on: ubuntu-latest

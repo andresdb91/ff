@@ -5,3 +5,6 @@ Dockerfile
 *.md
 .cache
 target/
+README.md
+.vscode/
+.github/
