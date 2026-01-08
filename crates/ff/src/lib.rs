@@ -2,8 +2,7 @@ pub mod api;
 mod domain;
 mod app;
 mod adapter;
-mod utils;
+pub mod utils;
 mod auth;
-mod config;
 
 pub fn setup() {}

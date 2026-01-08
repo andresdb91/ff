@@ -1,8 +1,17 @@
 // use axum::{Router, routing::get};
 use tokio::signal;
+use clap::Parser;
+#[derive(Parser, Debug)]
+struct Args {
+    #[arg(short, long)]
+    log_level: String
+}
 
 #[tokio::main]
 async fn main() {
+    let args = Args::parse();
+    let config = ff::utils::Config::new(None);
+
     let bind_ip = "0.0.0.0";
     let port = "3000";
 

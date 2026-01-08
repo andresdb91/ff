@@ -16,3 +16,4 @@ jsonwebtoken = { version = "10.2.0", features = ["rust_crypto"] }
 tower-http = { version = "0.6.8", features = ["catch-panic"] }
 tower = { version = "0.5.2", features = ["timeout", "retry", "tokio", "tracing", "util", "limit", "reconnect", "hedge"] }
 figment = { version = "0.10", features = ["toml", "env"] }
+clap = { version = "4.5.54", features = ["derive"] }
