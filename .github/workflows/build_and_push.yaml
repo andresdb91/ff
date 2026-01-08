@@ -55,5 +55,5 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
           keep-n-tagged: 5
-          older-than: 30
+          older-than: "30 days"
           delete-untagged: true
