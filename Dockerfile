@@ -6,9 +6,10 @@ FROM rust:alpine as chef
 RUN cargo install --locked cargo-chef
 
 FROM chef as planner
+ARG BUILD_TARGET
 WORKDIR /chef
 COPY . .
-RUN cargo chef prepare --recipe-path recipe.json
+RUN cargo chef prepare --target ${BUILD_TARGET} --recipe-path recipe.json
 
 FROM chef as builder
 ARG BUILD_TARGET
@@ -19,7 +20,7 @@ RUN addgroup -S -g 1000 app && adduser -S -H -s /sbin/nologin -u 1000 app -G app
 WORKDIR /build
 
 COPY --from=planner /chef/recipe.json recipe.json
-RUN cargo chef cook --recipe-path recipe.json --release
+RUN cargo chef cook --target ${BUILD_TARGET} --recipe-path recipe.json --release
 
 COPY . .
 RUN cargo build --workspace --target ${BUILD_TARGET} --release --message-format ${BUILD_MSG_FORMAT} ${BUILD_VERBOSITY} --locked
