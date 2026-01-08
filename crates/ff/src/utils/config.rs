@@ -1,20 +1,23 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use figment::{
-    Figment,
-    providers,
-    providers::Format,
-};
+use figment::{Figment, providers, providers::Format};
 
 #[derive(Serialize, Deserialize)]
-pub struct Config {}
+pub struct ApiConfig {
+    pub bind_ip: String,
+    pub port: u16,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Config {
+    pub api: ApiConfig,
+}
 
 impl Config {
-    pub fn new(overrides: Option<Config>) -> Self {
+    pub fn new(overrides: Option<&str>) -> Self {
         Figment::from(providers::Serialized::defaults(Config::default()))
-            .merge(providers::Toml::file("config.toml"))
+            .merge(providers::Toml::file(overrides.unwrap_or("config.toml")))
             .merge(providers::Env::prefixed("FF_"))
-            .merge(providers::Serialized::defaults(overrides.unwrap_or(Config{})))
             .extract()
             .expect("Error parsing configuration")
     }
@@ -22,6 +25,11 @@ impl Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Config {}
+        Config {
+            api: ApiConfig {
+                bind_ip: String::from("0.0.0.0"),
+                port: 3000,
+            },
+        }
     }
 }

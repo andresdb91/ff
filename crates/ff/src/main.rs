@@ -1,22 +1,22 @@
-// use axum::{Router, routing::get};
 use tokio::signal;
 use clap::Parser;
+
 #[derive(Parser, Debug)]
 struct Args {
     #[arg(short, long)]
-    log_level: Option<String>
+    config: Option<String>
 }
 
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
-    let config = ff::utils::Config::new(None);
+    let config = ff::utils::Config::new(args.config.as_deref());
 
-    let bind_ip = "0.0.0.0";
-    let port = "3000";
+    let bind_ip = config.api.bind_ip;
+    let port = config.api.port;
 
     let app = ff::api::init_router();
-    let listener = tokio::net::TcpListener::bind(format!("{}:{}", bind_ip, port)).await.expect(&format!("Could not start server on IP {} and port {}", bind_ip, port));
+    let listener = tokio::net::TcpListener::bind(format!("{bind_ip}:{port}")).await.expect(&format!("Could not start server on IP {bind_ip} and port {port}"));
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())
         .await
