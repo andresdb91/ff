@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::{adapters, auth, domain};
+use crate::{adapters, auth, domain, utils};
 
 #[derive(Clone)]
 pub struct Services {
@@ -8,9 +8,10 @@ pub struct Services {
 }
 
 impl Services {
-    pub fn new(adapters: adapters::Adapters) -> Self {
+    pub fn new(config: &utils::config::Config, adapters: adapters::Adapters) -> Self {
         Services {
             auth: Arc::new(auth::service::AuthService::new(
+                &config.auth.jwt_secret,
                 adapters.auth_user,
                 adapters.auth_role,
             )),

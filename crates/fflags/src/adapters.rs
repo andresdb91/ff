@@ -1,6 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
-use crate::auth::repositories::{RoleRepository, UserRepository};
+use crate::{auth::repositories::{RoleRepository, UserRepository}, utils};
 
 pub struct ConcreteUserRepo {}
 pub struct ConcreteRoleRepo {}
@@ -41,7 +41,7 @@ pub struct Adapters {
 }
 
 impl Adapters {
-    pub fn new() -> Self {
+    pub fn new(_config: &utils::config::Config) -> Self {
         Adapters {
             auth_user: Arc::new(ConcreteUserRepo {}),
             auth_role: Arc::new(ConcreteRoleRepo {}),

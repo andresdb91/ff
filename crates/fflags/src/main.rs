@@ -11,8 +11,8 @@ struct Args {
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let args = Args::parse();
     let config = fflags::utils::Config::new(args.config.as_deref());
-    let adapters = fflags::adapters::Adapters::new();
-    let services = fflags::app::Services::new(adapters);
+    let adapters = fflags::adapters::Adapters::new(&config);
+    let services = fflags::app::Services::new(&config, adapters);
 
     let bind_ip = &config.api.bind_ip;
     let port = &config.api.port;
