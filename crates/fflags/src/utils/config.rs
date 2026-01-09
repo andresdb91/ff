@@ -2,13 +2,13 @@ use serde::{Deserialize, Serialize};
 
 use figment::{Figment, providers, providers::Format};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ApiConfig {
     pub bind_ip: String,
     pub port: u16,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
     pub api: ApiConfig,
 }

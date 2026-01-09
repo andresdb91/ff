@@ -9,7 +9,13 @@ use axum::{Router, http::StatusCode, response::IntoResponse};
 use tower::ServiceBuilder;
 use tower_http::catch_panic::CatchPanicLayer;
 
-pub fn init_router() -> Router {
+#[derive(Clone)]
+pub struct AppState {
+    pub config: super::utils::Config,
+    pub services: super::app::Services,
+}
+
+pub fn init_router(state: AppState) -> Router {
     let custom_panic_layer = CatchPanicLayer::custom(|err: Box<dyn Any + Send + 'static>| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -28,4 +34,5 @@ pub fn init_router() -> Router {
         .merge(routers::users_router())
         .merge(routers::auth_router())
         .layer(middleware)
+        .with_state(state)
 }
