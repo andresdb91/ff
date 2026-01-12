@@ -5,6 +5,6 @@ pub trait RoleRepository: Send + Sync {
 }
 
 pub trait UserRepository: Send + Sync {
-    fn get_user_by_email(&self, email: &str) -> models::User;
+    fn get_user_by_email(&self, email: &str) -> Result<models::User, models::UserNotFound>;
     fn create_user(&self, user_data: models::UserData) -> models::User;
 }

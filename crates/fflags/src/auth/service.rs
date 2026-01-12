@@ -7,9 +7,11 @@ use super::{models, repositories};
 use axum::extract::State;
 use axum::{
     http::Request,
-    response::{Response, IntoResponse},
+    response::{IntoResponse, Response},
 };
 use repositories::{RoleRepository, UserRepository};
+use tower_sessions::Session;
+
 
 pub struct AuthService {
     user_repository: Arc<dyn UserRepository + Send + Sync>,
@@ -30,7 +32,10 @@ impl AuthService {
         }
     }
     pub fn login(&self, email: &str, password: &str) -> Result<String, models::InvalidLoginError> {
-        let user: models::User = self.user_repository.get_user_by_email(&email);
+        let user: models::User = match self.user_repository.get_user_by_email(&email) {
+            Ok(u) => u,
+            Err(_) => Err(models::InvalidLoginError {})?,
+        };
         // Verify against stored hashed password
         if user.verify_password(password) {
             // Valid password
@@ -67,29 +72,34 @@ impl AuthService {
     fn generate_jwt(&self, user: models::User) -> String {
         String::from(format!("token for {}", user.email))
     }
+}
 
-    pub async fn jwt_header_auth<B>(
-        State(state): State<AppState>,
-        mut req: Request<B>,
-        next: axum::middleware::Next,
-    ) -> Result<Response, Response>
-    where
-        B: Send + Into<axum::body::Body>,
-    {
-        let token = req
+pub async fn jwt_header_auth<B>(
+    State(state): State<AppState>,
+    session: Session,
+    mut req: Request<B>,
+    next: axum::middleware::Next,
+) -> Result<Response, Response>
+where
+    B: Send + Into<axum::body::Body>,
+{
+    let token: models::JWTToken;
+    if state.config.auth.use_session_cookie {
+        token = session.get(models::SESSION_STORE_JWT_KEY).await.expect("Session store failure").expect("Failure parsing token from session store");
+    } else {
+        token = models::JWTToken(req
             .headers()
             .get("Authorization")
             .and_then(|v| v.to_str().ok())
             .and_then(|header| header.strip_prefix("Bearer "))
-            .map(|t| t.trim())
+            .map(|t| t.trim().to_string())
             .filter(|t| !t.is_empty())
-            .ok_or_else(|| jwt::AuthError::InvalidToken.into_response())?;
-
-        let token_data = state.services.auth.validate_jwt(token.as_bytes());
-        match token_data {
-            Ok(claims) => req.extensions_mut().insert(claims),
-            Err(e) => Err(e.into_response())?,
-        };
-        Ok(next.run(req.map(Into::into)).await)
+            .ok_or_else(|| jwt::AuthError::MissingCredentials.into_response())?);
     }
+    let token_data = state.services.auth.validate_jwt(token.0.as_bytes());
+    match token_data {
+        Ok(claims) => req.extensions_mut().insert(claims),
+        Err(e) => Err(e.into_response())?,
+    };
+    Ok(next.run(req.map(Into::into)).await)
 }

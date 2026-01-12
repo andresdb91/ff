@@ -37,7 +37,7 @@ async fn shutdown_signal() {
     };
 
     #[cfg(unix)]
-    let mut sigterm = async {
+    let sigterm = async {
         signal::unix::signal(signal::unix::SignalKind::terminate())
             .expect("Failed to register SIGTERM handler")
             .recv()

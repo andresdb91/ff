@@ -4,7 +4,13 @@ use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
 };
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+pub const SESSION_STORE_JWT_KEY: &str = "jwt";
+
+#[derive(Default, Deserialize, Serialize)]
+pub struct JWTToken(pub String);
 
 enum Permission {
     None = 0,
@@ -29,6 +35,9 @@ pub struct User {
 
 #[derive(Debug, Clone)]
 pub struct InvalidLoginError {}
+
+#[derive(Debug, Clone)]
+pub struct UserNotFound {}
 
 #[derive(Debug, Clone)]
 pub struct InvalidRoleError {}

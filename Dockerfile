@@ -32,6 +32,6 @@ FROM scratch
 ARG BUILD_TARGET
 COPY --from=user /etc/passwd /etc/passwd
 WORKDIR /app
-COPY --from=builder --chown=1000:1000 /build/target/${BUILD_TARGET}/release/ff .
+COPY --from=builder --chown=1000:1000 /build/target/${BUILD_TARGET}/release/fflags .
 USER app
-ENTRYPOINT [ "/app/ff" ]
+ENTRYPOINT [ "/app/fflags" ]

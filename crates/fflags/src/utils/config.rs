@@ -11,6 +11,7 @@ pub struct ApiConfig {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct AuthConfig {
     pub jwt_secret: [u8; 32],
+    pub use_session_cookie: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -42,6 +43,7 @@ impl Default for Config {
             },
             auth: AuthConfig {
                 jwt_secret,
+                use_session_cookie: true,
             }
         }
     }

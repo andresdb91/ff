@@ -2,12 +2,12 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize)]
 pub struct LoginResponse {
-    token: String,
+    token: Option<String>,
 }
 
 impl LoginResponse {
     pub fn new(token: Option<String>) -> Self {
-        LoginResponse { token: token.unwrap_or(String::new()) }
+        LoginResponse { token }
     }
 }
 

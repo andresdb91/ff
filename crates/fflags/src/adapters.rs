@@ -9,7 +9,10 @@ impl UserRepository for ConcreteUserRepo {
     fn create_user(&self, user_data: crate::auth::models::UserData) -> crate::auth::models::User {
         crate::auth::models::User::new(user_data)
     }
-    fn get_user_by_email(&self, email: &str) -> crate::auth::models::User {
+    fn get_user_by_email(&self, email: &str) -> Result<crate::auth::models::User, crate::auth::models::UserNotFound> {
+        if email.is_empty() {
+            return Err(crate::auth::models::UserNotFound{})
+        }
         let user_data = crate::auth::models::UserData {
             email: email.to_string(),
             password: String::from("password"),
@@ -19,7 +22,7 @@ impl UserRepository for ConcreteUserRepo {
                 permissions: HashMap::from([(String::from("/"), 0b00011111)]),
             },
         };
-        crate::auth::models::User::new(user_data)
+        Ok(crate::auth::models::User::new(user_data))
     }
 }
 
