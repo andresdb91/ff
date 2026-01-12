@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use super::models;
 use axum::Json;
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
@@ -17,8 +19,8 @@ pub enum AuthError {
 impl IntoResponse for AuthError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
-            AuthError::WrongCredentials => (StatusCode::UNAUTHORIZED, "Wrong credentials"),
-            AuthError::MissingCredentials => (StatusCode::BAD_REQUEST, "Missing credentials"),
+            AuthError::WrongCredentials => (StatusCode::FORBIDDEN, "Wrong credentials"),
+            AuthError::MissingCredentials => (StatusCode::UNAUTHORIZED, "Missing credentials"),
             AuthError::TokenCreation => (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"),
             AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token"),
         };
@@ -48,10 +50,10 @@ impl Keys {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Claims {
-    iss: String,
-    sub: String,
-    aud: String,
-    exp: usize,
-    iat: usize,
-    permissions: usize,
+    pub iss: String,
+    pub sub: String,
+    pub aud: String,
+    pub exp: usize,
+    pub iat: usize,
+    pub permissions: HashMap<String, usize>,
 }

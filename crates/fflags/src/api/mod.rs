@@ -32,8 +32,8 @@ pub fn init_router(state: AppState) -> Router {
 
     let session_store = MemoryStore::default();
     let session_layer = SessionManagerLayer::new(session_store)
-        .with_secure(false)
-        .with_expiry(Expiry::OnInactivity(Duration::seconds(10)));
+        .with_secure(true)
+        .with_expiry(Expiry::OnInactivity(Duration::hours(6)));
 
     let middleware = ServiceBuilder::new()
         .layer(custom_panic_layer)
@@ -49,6 +49,10 @@ pub fn init_router(state: AppState) -> Router {
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             auth::service::jwt_header_auth,
+        ))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            auth::service::authorize_path,
         ));
 
     Router::new()

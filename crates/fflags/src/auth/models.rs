@@ -12,13 +12,13 @@ pub const SESSION_STORE_JWT_KEY: &str = "jwt";
 #[derive(Default, Deserialize, Serialize)]
 pub struct JWTToken(pub String);
 
-enum Permission {
-    None = 0,
-    CreateFeatureFlag = 0b00000001,
-    ReadFeatureFlag = 0b00000010,
-    SetFeatureFlag = 0b00000100,
-    ModifyFeatureFlag = 0b00001000,
-    DescribeFeatureFlag = 0b00010000,
+#[repr(usize)]
+pub enum Permission {
+    None = 0b0000,
+    Read = 0b0001,
+    Edit = 0b0010,
+    Create = 0b0100,
+    Propagate = 0b1000,
 }
 
 pub struct Role {
