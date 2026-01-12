@@ -111,7 +111,7 @@ where
             .get(models::SESSION_STORE_JWT_KEY)
             .await
             .expect("Session store failure")
-            .expect("Failure parsing token from session store");
+            .ok_or_else(|| jwt::AuthError::MissingCredentials.into_response())?;
     } else {
         token = models::JWTToken(
             req.headers()

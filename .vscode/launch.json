@@ -8,7 +8,7 @@
             "name": "(Windows) Launch Rust",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/target/debug/ff.exe",
+            "program": "${workspaceFolder}/target/debug/fflags.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

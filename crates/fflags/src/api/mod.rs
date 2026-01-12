@@ -48,11 +48,11 @@ pub fn init_router(state: AppState) -> Router {
         .nest("/users", routers::users_router())
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
-            auth::service::jwt_header_auth,
+            auth::service::authorize_path,
         ))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
-            auth::service::authorize_path,
+            auth::service::jwt_header_auth,
         ));
 
     Router::new()
