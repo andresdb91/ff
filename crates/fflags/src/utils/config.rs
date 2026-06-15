@@ -24,7 +24,7 @@ impl Config {
     pub fn new(overrides: Option<&str>) -> Self {
         Figment::from(providers::Serialized::defaults(Config::default()))
             .merge(providers::Toml::file(overrides.unwrap_or("config.toml")))
-            .merge(providers::Env::prefixed("FF_"))
+            .merge(providers::Env::prefixed("FF_").split("__"))
             .extract()
             .expect("Error parsing configuration")
     }

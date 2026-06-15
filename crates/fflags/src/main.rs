@@ -11,6 +11,7 @@ struct Args {
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let args = Args::parse();
     let config = fflags::utils::Config::new(args.config.as_deref());
+    println!("{:?}",config.auth.use_session_cookie);
     let adapters = fflags::adapters::Adapters::new(&config);
     let services = fflags::app::Services::new(&config, adapters);
 

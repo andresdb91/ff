@@ -14,8 +14,8 @@
             "cwd": "${workspaceFolder}",
             "environment": [
                 {
-                    "name": "FF_AUTHCONFIG_USER_SESSION_COOKIE",
-                    "value": "true"
+                    "name": "FF_AUTH__USE_SESSION_COOKIE",
+                    "value": "false"
                 }
             ],
             "console": "internalConsole",
