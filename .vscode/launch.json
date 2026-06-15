@@ -12,8 +12,13 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "console": true,
+            "environment": [
+                {
+                    "name": "FF_AUTHCONFIG_USER_SESSION_COOKIE",
+                    "value": "true"
+                }
+            ],
+            "console": "internalConsole",
             // Optional: for stepping into Rust standard library source code
             "sourceFileMap": {
                 "/rustc/*": "${env:USERPROFILE}/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust"
