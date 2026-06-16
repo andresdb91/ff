@@ -108,7 +108,7 @@ impl AuthService {
         };
         self.jwt_keys.encode(&claims).map_err(|_err| {
             //tracing err
-            jwt::AuthError::InvalidToken
+            jwt::AuthError::TokenCreationError
         })
     }
 
