@@ -1,4 +1,5 @@
 use argon2::password_hash::rand_core::{OsRng, RngCore};
+use base64::{prelude::BASE64_STANDARD, Engine};
 use serde::{Deserialize, Serialize};
 use figment::{Figment, providers, providers::Format};
 
@@ -10,7 +11,9 @@ pub struct ApiConfig {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct AuthConfig {
-    pub jwt_secret: [u8; 32],
+    pub jwt_secret: String, // [u8; 32]
+    pub jwt_issuer: String,
+    pub jwt_duration: u64,
     pub use_session_cookie: bool,
 }
 
@@ -42,7 +45,9 @@ impl Default for Config {
                 port: 3000,
             },
             auth: AuthConfig {
-                jwt_secret,
+                jwt_secret: BASE64_STANDARD.encode(jwt_secret),
+                jwt_issuer: String::from("FF"),
+                jwt_duration: 3600,
                 use_session_cookie: true,
             }
         }

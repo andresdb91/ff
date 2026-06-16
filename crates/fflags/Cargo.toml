@@ -18,3 +18,4 @@ tower = { version = "0.5.2", features = ["timeout", "retry", "tokio", "tracing",
 figment = { version = "0.10", features = ["toml", "env"] }
 clap = { version = "4.5.54", features = ["derive"] }
 tower-sessions = "0.14.0"
+base64 = "0.22.1"

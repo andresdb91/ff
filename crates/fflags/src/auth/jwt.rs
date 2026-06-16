@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use super::models;
+// use super::models;
 use axum::Json;
-use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 
 use axum::response::{ IntoResponse, Response };
 use axum::http::StatusCode;
@@ -46,6 +46,9 @@ impl Keys {
     pub fn decode(&self, token: &[u8]) -> Result<jsonwebtoken::TokenData<Claims>, jsonwebtoken::errors::Error> {
         decode::<Claims>(token, &self.decoding, &Validation::default())
     }
+    pub fn encode(&self, claims: &Claims) -> Result<String, jsonwebtoken::errors::Error> {
+        encode(&Header::default(), claims, &self.encoding)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -53,7 +56,7 @@ pub struct Claims {
     pub iss: String,
     pub sub: String,
     pub aud: String,
-    pub exp: usize,
-    pub iat: usize,
+    pub exp: u64,
+    pub iat: u64,
     pub permissions: HashMap<String, usize>,
 }

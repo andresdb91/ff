@@ -1,5 +1,7 @@
+use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Arc;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use crate::api::AppState;
 
@@ -13,21 +15,29 @@ use axum::{
 };
 use repositories::{RoleRepository, UserRepository};
 use tower_sessions::Session;
+use base64::{prelude::BASE64_STANDARD, Engine};
 
 pub struct AuthService {
     user_repository: Arc<dyn UserRepository + Send + Sync>,
     role_repository: Arc<dyn RoleRepository + Send + Sync>,
     jwt_keys: jwt::Keys,
+    jwt_issuer: String,
+    jwt_duration: u64,
 }
 
 impl AuthService {
     pub fn new(
-        jwt_secret: &[u8],
+        jwt_secret: &str,
+        jwt_issuer: &str,
+        jwt_duration: u64,
         user_repository: Arc<dyn repositories::UserRepository>,
         role_repository: Arc<dyn repositories::RoleRepository>,
     ) -> Self {
+        let jwt_secret_decoded = BASE64_STANDARD.decode(jwt_secret).expect("Invalid Base64 encoded secret");
         Self {
-            jwt_keys: jwt::Keys::new(jwt_secret),
+            jwt_keys: jwt::Keys::new(&jwt_secret_decoded),
+            jwt_issuer: String::from(jwt_issuer),
+            jwt_duration: jwt_duration,
             user_repository: user_repository.clone(),
             role_repository: role_repository.clone(),
         }
@@ -40,7 +50,11 @@ impl AuthService {
         // Verify against stored hashed password
         if user.verify_password(password) {
             // Valid password
-            Ok(self.generate_jwt(user))
+            let token_data = self.generate_jwt(user);
+            match token_data {
+                Ok(token) => Ok(token),
+                Err(_e) => Err(models::InvalidLoginError {}),
+            }
         } else {
             // Invalid password
             Err(models::InvalidLoginError {})
@@ -70,8 +84,32 @@ impl AuthService {
         Ok(result.claims)
     }
 
-    fn generate_jwt(&self, user: models::User) -> String {
-        String::from(format!("token for {}", user.email))
+    fn generate_jwt(&self, user: models::User) -> Result<String, jwt::AuthError> {
+        let now = SystemTime::now();
+        let lifetime = Duration::from_secs(self.jwt_duration);
+        let exp = now
+            .checked_add(lifetime)
+            .expect("Time overflow")
+            .duration_since(UNIX_EPOCH)
+            .expect("Wrong system time")
+            .as_secs();
+        let iat = now
+            .duration_since(UNIX_EPOCH)
+            .expect("Wrong local time")
+            .as_secs();
+        let claims = jwt::Claims{
+            iss: String::from(&self.jwt_issuer),
+            sub: String::from(&user.email),
+            aud: String::from("FF"),
+            exp: exp,
+            iat: iat,
+            // permissions: HashMap::from([(String::from("/"), 0b00011111)]),
+            permissions: user.role.permissions,
+        };
+        self.jwt_keys.encode(&claims).map_err(|_err| {
+            //tracing err
+            jwt::AuthError::InvalidToken
+        })
     }
 
     fn authorize_path(&self, path: &str, intent: usize, claims: &jwt::Claims) -> bool {

@@ -12,6 +12,8 @@ impl Services {
         Services {
             auth: Arc::new(auth::service::AuthService::new(
                 &config.auth.jwt_secret,
+                &config.auth.jwt_issuer,
+                config.auth.jwt_duration,
                 adapters.auth_user,
                 adapters.auth_role,
             )),
